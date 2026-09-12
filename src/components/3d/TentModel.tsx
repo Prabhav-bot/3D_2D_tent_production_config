@@ -8,10 +8,14 @@ interface TentModelProps {
   textureEngine: TextureSyncEngine;
 }
 
+const baseUrl = import.meta.env.BASE_URL.endsWith('/')
+  ? import.meta.env.BASE_URL
+  : `${import.meta.env.BASE_URL}/`;
+
 const MODEL_PATHS: Record<string, string> = {
-  '5x5': '/models/Tent_5_5.glb',
-  '6.5x6.5': '/models/Tent 6.5_6.5.glb',
-  '8x8': '/models/Tent_8_8.glb',
+  '5x5': `${baseUrl}models/Tent_5_5.glb`,
+  '6.5x6.5': `${baseUrl}models/Tent 6.5_6.5.glb`,
+  '8x8': `${baseUrl}models/Tent_8_8.glb`,
 };
 
 export const TentModel: React.FC<TentModelProps> = ({ textureEngine }) => {
@@ -88,6 +92,6 @@ export const TentModel: React.FC<TentModelProps> = ({ textureEngine }) => {
 };
 
 // Preload models for instant seamless switching
-useGLTF.preload('/models/Tent_5_5.glb');
-useGLTF.preload('/models/Tent 6.5_6.5.glb');
-useGLTF.preload('/models/Tent_8_8.glb');
+useGLTF.preload(`${baseUrl}models/Tent_5_5.glb`);
+useGLTF.preload(`${baseUrl}models/Tent 6.5_6.5.glb`);
+useGLTF.preload(`${baseUrl}models/Tent_8_8.glb`);

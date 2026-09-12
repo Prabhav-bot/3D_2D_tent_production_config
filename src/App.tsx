@@ -1,6 +1,8 @@
 import React, { useState, useRef, useMemo } from 'react';
 import { Header } from './components/ui/Header';
 import { EmbeddedHeader } from './components/shopify/EmbeddedHeader';
+import { ProductHeroHeader } from './components/ui/ProductHeroHeader';
+import { ProductSpecificationsCard } from './components/ui/ProductSpecificationsCard';
 import { TentViewer3D } from './components/3d/TentViewer3D';
 import { Canvas2DEditor } from './components/2d/Canvas2DEditor';
 import { SectionSelector } from './components/controls/SectionSelector';
@@ -34,84 +36,90 @@ export function App() {
       <Header />
 
       {/* Main Studio Workspace Body */}
-      <main className="flex-1 max-w-[1800px] w-full mx-auto p-3 sm:p-4 lg:p-6 grid grid-cols-1 lg:grid-cols-12 gap-5">
-        
-        {/* Left Column: Control Toolkit & Product Customizer (5 cols on lg) */}
-        <div className="lg:col-span-5 flex flex-col space-y-4 max-h-[calc(100vh-140px)] overflow-y-auto pr-1">
-          {/* Toolkit Navigation Tabs */}
-          <div className="flex items-center gap-1 bg-slate-900/90 p-1.5 rounded-2xl border border-slate-800 shadow-lg">
-            <button
-              onClick={() => setControlTab('product')}
-              className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl text-xs font-bold transition-all ${
-                controlTab === 'product'
-                  ? 'bg-sky-500 text-white shadow-md shadow-sky-500/20'
-                  : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
-              }`}
-            >
-              <Sliders className="w-3.5 h-3.5" /> Product Specs
-            </button>
-            <button
-              onClick={() => setControlTab('color')}
-              className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl text-xs font-bold transition-all ${
-                controlTab === 'color'
-                  ? 'bg-sky-500 text-white shadow-md shadow-sky-500/20'
-                  : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
-              }`}
-            >
-              <Palette className="w-3.5 h-3.5" /> Colors
-            </button>
-            <button
-              onClick={() => setControlTab('graphics')}
-              className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl text-xs font-bold transition-all ${
-                controlTab === 'graphics'
-                  ? 'bg-sky-500 text-white shadow-md shadow-sky-500/20'
-                  : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
-              }`}
-            >
-              <Layout className="w-3.5 h-3.5" /> Graphics
-            </button>
-            <button
-              onClick={() => setControlTab('layers')}
-              className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl text-xs font-bold transition-all ${
-                controlTab === 'layers'
-                  ? 'bg-sky-500 text-white shadow-md shadow-sky-500/20'
-                  : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
-              }`}
-            >
-              <Layers className="w-3.5 h-3.5" /> Layers
-            </button>
+      <main className="flex-1 max-w-[1800px] w-full mx-auto p-3 sm:p-4 lg:p-6 space-y-5">
+        {/* Commercial Hero Title & Trust Badges Card */}
+        <ProductHeroHeader />
+
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
+          {/* Left Column: Control Toolkit & Product Customizer (5 cols on lg) */}
+          <div className="lg:col-span-5 flex flex-col space-y-4 max-h-[calc(100vh-140px)] overflow-y-auto pr-1">
+            {/* Step-by-Step Toolkit Navigation Tabs */}
+            <div className="flex items-center gap-1 bg-slate-900/90 p-1.5 rounded-2xl border border-slate-800 shadow-lg">
+              <button
+                onClick={() => setControlTab('product')}
+                className={`flex-1 flex items-center justify-center gap-1 py-2 rounded-xl text-xs font-bold transition-all ${
+                  controlTab === 'product'
+                    ? 'bg-sky-500 text-white shadow-md shadow-sky-500/20'
+                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
+                }`}
+              >
+                <Sliders className="w-3.5 h-3.5" /> 1. Specs
+              </button>
+              <button
+                onClick={() => setControlTab('color')}
+                className={`flex-1 flex items-center justify-center gap-1 py-2 rounded-xl text-xs font-bold transition-all ${
+                  controlTab === 'color'
+                    ? 'bg-sky-500 text-white shadow-md shadow-sky-500/20'
+                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
+                }`}
+              >
+                <Palette className="w-3.5 h-3.5" /> 2. Color
+              </button>
+              <button
+                onClick={() => setControlTab('graphics')}
+                className={`flex-1 flex items-center justify-center gap-1 py-2 rounded-xl text-xs font-bold transition-all ${
+                  controlTab === 'graphics'
+                    ? 'bg-sky-500 text-white shadow-md shadow-sky-500/20'
+                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
+                }`}
+              >
+                <Layout className="w-3.5 h-3.5" /> 3. Graphics
+              </button>
+              <button
+                onClick={() => setControlTab('layers')}
+                className={`flex-1 flex items-center justify-center gap-1 py-2 rounded-xl text-xs font-bold transition-all ${
+                  controlTab === 'layers'
+                    ? 'bg-sky-500 text-white shadow-md shadow-sky-500/20'
+                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
+                }`}
+              >
+                <Layers className="w-3.5 h-3.5" /> 4. Layers
+              </button>
+            </div>
+
+            {/* Active Tab Panel Content */}
+            <div className="space-y-4">
+              {controlTab === 'product' && (
+                <>
+                  <VariantSelector />
+                  <ColorPickerPanel />
+                </>
+              )}
+
+              {controlTab === 'color' && <ColorPickerPanel />}
+
+              {controlTab === 'graphics' && (
+                <>
+                  <SectionSelector />
+                  <TextLayerTool />
+                  <ImageLayerTool />
+                </>
+              )}
+
+              {controlTab === 'layers' && (
+                <>
+                  <SectionSelector />
+                  <LayerManagerList />
+                </>
+              )}
+
+              {/* Real-Time Pricing Card */}
+              <PricingSummary />
+
+              {/* Commercial Product Specs Accordion */}
+              <ProductSpecificationsCard />
+            </div>
           </div>
-
-          {/* Active Tab Panel Content */}
-          <div className="space-y-4">
-            {controlTab === 'product' && (
-              <>
-                <VariantSelector />
-                <ColorPickerPanel />
-              </>
-            )}
-
-            {controlTab === 'color' && <ColorPickerPanel />}
-
-            {controlTab === 'graphics' && (
-              <>
-                <SectionSelector />
-                <TextLayerTool />
-                <ImageLayerTool />
-              </>
-            )}
-
-            {controlTab === 'layers' && (
-              <>
-                <SectionSelector />
-                <LayerManagerList />
-              </>
-            )}
-
-            {/* Always visible Real-Time Pricing Card */}
-            <PricingSummary />
-          </div>
-        </div>
 
         {/* Right Column: Interactive 3D Stage & 2D Canvas Workspace (7 cols on lg) */}
         <div className="lg:col-span-7 flex flex-col space-y-3 min-h-[550px] lg:min-h-0">
@@ -188,7 +196,8 @@ export function App() {
             )}
           </div>
         </div>
-      </main>
+      </div>
+    </main>
 
       {/* Shopify Cart Drawer */}
       <LineItemPropertiesDrawer />

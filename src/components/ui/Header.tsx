@@ -32,9 +32,9 @@ export const Header: React.FC = () => {
         </div>
         <div>
           <h1 className="font-extrabold text-slate-100 text-base tracking-tight leading-none flex items-center gap-2">
-            PRO CANOPY TENT <span className="bg-sky-500/20 text-sky-400 text-[10px] uppercase font-mono px-2 py-0.5 rounded-full border border-sky-500/30">3D CONFIGURATOR</span>
+            MVP VISUALS STUDIO <span className="bg-sky-500/20 text-sky-400 text-[10px] uppercase font-mono px-2 py-0.5 rounded-full border border-sky-500/30">3D CONFIGURATOR</span>
           </h1>
-          <p className="text-[11px] text-slate-400 font-medium">Interactive 2D/3D Product Studio & Shopify Engine</p>
+          <p className="text-[11px] text-slate-400 font-medium">Commercial Canopy Tents • Real-Time 3D Prepress Studio</p>
         </div>
       </div>
 

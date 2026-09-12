@@ -99,17 +99,46 @@ export async function generateProductionPdf(
   const boxWidth = (pageWidth - margin * 2 - 6) / 2;
   const boxHeight = 55;
 
-  // 3D Canvas Image
+  // Helper to export canvas with a solid white background (prevents transparent/black WebGL export issues)
+  const exportCanvasWithBackground = (canvas: HTMLCanvasElement | null, fallbackSelector?: string): string | null => {
+    let targetCanvas = canvas;
+    if (!targetCanvas && fallbackSelector) {
+      targetCanvas = document.querySelector(fallbackSelector) as HTMLCanvasElement;
+    }
+    if (!targetCanvas) {
+      targetCanvas = document.querySelector('canvas') as HTMLCanvasElement;
+    }
+    if (!targetCanvas) return null;
+
+    try {
+      const tempCanvas = document.createElement('canvas');
+      tempCanvas.width = targetCanvas.width || 1024;
+      tempCanvas.height = targetCanvas.height || 1024;
+      const ctx = tempCanvas.getContext('2d');
+      if (!ctx) return targetCanvas.toDataURL('image/png');
+
+      // Fill with clean white background so transparent 3D renders render clearly in PDF
+      ctx.fillStyle = '#F8FAFC';
+      ctx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+      ctx.drawImage(targetCanvas, 0, 0);
+      return tempCanvas.toDataURL('image/png');
+    } catch (e) {
+      console.warn('Error capturing canvas image for PDF:', e);
+      return null;
+    }
+  };
+
+  // 3D Canvas Image Export
   pdf.setFillColor(248, 250, 252);
   pdf.rect(margin, cursorY, boxWidth, boxHeight, 'F');
   pdf.rect(margin, cursorY, boxWidth, boxHeight, 'D');
 
-  if (canvas3dElement) {
+  const img3dData = exportCanvasWithBackground(canvas3dElement);
+  if (img3dData) {
     try {
-      const img3dData = canvas3dElement.toDataURL('image/png');
       pdf.addImage(img3dData, 'PNG', margin + 2, cursorY + 2, boxWidth - 4, boxHeight - 8);
     } catch (e) {
-      console.warn('Could not export 3D canvas', e);
+      console.warn('Could not add 3D image to PDF', e);
     }
   }
   pdf.setFont('helvetica', 'bold');
@@ -117,18 +146,18 @@ export async function generateProductionPdf(
   pdf.setTextColor(71, 85, 105);
   pdf.text('3D Product Render View', margin + 4, cursorY + boxHeight - 2);
 
-  // 2D Flat Texture Canvas Image
+  // 2D Flat Texture Canvas Image Export
   const box2dX = margin + boxWidth + 6;
   pdf.setFillColor(248, 250, 252);
   pdf.rect(box2dX, cursorY, boxWidth, boxHeight, 'F');
   pdf.rect(box2dX, cursorY, boxWidth, boxHeight, 'D');
 
-  if (flat2dCanvasElement) {
+  const img2dData = exportCanvasWithBackground(flat2dCanvasElement);
+  if (img2dData) {
     try {
-      const img2dData = flat2dCanvasElement.toDataURL('image/png');
       pdf.addImage(img2dData, 'PNG', box2dX + 2, cursorY + 2, boxWidth - 4, boxHeight - 8);
     } catch (e) {
-      console.warn('Could not export 2D canvas', e);
+      console.warn('Could not add 2D image to PDF', e);
     }
   }
   pdf.text('2D Flattened Print Texture Atlas', box2dX + 4, cursorY + boxHeight - 2);

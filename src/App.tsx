@@ -28,7 +28,6 @@ import {
   Layout,
   Layers,
   Monitor,
-  Sparkles,
   Eye,
   Box,
   RotateCcw,
@@ -63,7 +62,7 @@ export function App() {
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 pb-4 border-b border-slate-800/80">
             <div>
               <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-semibold mb-2">
-                <Sparkles className="w-3.5 h-3.5" />
+                <Box className="w-3.5 h-3.5" />
                 <span>Interactive 3D Configurator Studio</span>
               </div>
               <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">

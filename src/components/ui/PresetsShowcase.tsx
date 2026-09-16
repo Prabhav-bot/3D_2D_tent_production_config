@@ -1,6 +1,6 @@
 import React from 'react';
 import { useConfiguratorStore } from '../../store/useConfiguratorStore';
-import { Sparkles, Check, ArrowRight } from 'lucide-react';
+import { Palette, Check, ArrowRight } from 'lucide-react';
 import { TentSizeVariant } from '../../types/configurator';
 
 interface PresetItem {
@@ -85,7 +85,7 @@ export const PresetsShowcase: React.FC = () => {
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
           <div>
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-sky-500/10 border border-sky-500/30 text-sky-400 text-xs font-semibold mb-3">
-              <Sparkles className="w-3.5 h-3.5" />
+              <Palette className="w-3.5 h-3.5" />
               <span>Curated Inspiration Gallery</span>
             </div>
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-white tracking-tight">

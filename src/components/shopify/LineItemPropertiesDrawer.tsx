@@ -10,7 +10,8 @@ import {
   ArrowRight,
   Truck,
   ShieldCheck,
-  Sparkles,
+  Flame,
+  Clock,
   Tag,
   Check,
   Code,
@@ -336,7 +337,7 @@ export const LineItemPropertiesDrawer: React.FC = () => {
           <div className="space-y-3 pt-2">
             <div className="flex items-center justify-between">
               <h4 className="text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center gap-1.5">
-                <Sparkles className="w-3.5 h-3.5 text-amber-400" /> Recommended Commercial Gear
+                <Flame className="w-3.5 h-3.5 text-amber-400" /> Recommended Commercial Gear
               </h4>
               <span className="text-[10px] text-slate-500">1-Click Add</span>
             </div>
@@ -525,7 +526,7 @@ export const LineItemPropertiesDrawer: React.FC = () => {
             </span>
             <span>•</span>
             <span className="flex items-center gap-1">
-              <Sparkles className="w-3 h-3 text-amber-400" /> 24-Hr Proof
+              <Clock className="w-3 h-3 text-amber-400" /> 24-Hr Proof
             </span>
           </div>
         </div>

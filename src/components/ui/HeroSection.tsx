@@ -1,7 +1,7 @@
 import React from 'react';
 import { useConfiguratorStore } from '../../store/useConfiguratorStore';
 import {
-  Sparkles,
+  Award,
   ShieldCheck,
   Wind,
   Droplets,
@@ -50,7 +50,7 @@ export const HeroSection: React.FC = () => {
             </div>
 
             <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs font-semibold backdrop-blur-md">
-              <Sparkles className="w-3.5 h-3.5" />
+              <Award className="w-3.5 h-3.5" />
               <span>2026 Pro Series Edition</span>
             </div>
           </div>

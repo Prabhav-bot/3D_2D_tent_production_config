@@ -6,7 +6,7 @@ import {
   PhoneCall,
   Search,
   ChevronDown,
-  Sparkles,
+  Clock,
   ShieldCheck,
   Truck,
   Menu,
@@ -34,7 +34,7 @@ export const EcommerceHeader: React.FC = () => {
               <ShieldCheck className="w-3.5 h-3.5" /> 5-Year Hardware Warranty
             </span>
             <span className="hidden lg:inline-flex items-center gap-1.5 text-sky-200">
-              <Sparkles className="w-3.5 h-3.5" /> Free 24-Hour Artwork Proofing
+              <Clock className="w-3.5 h-3.5" /> Free 24-Hour Artwork Proofing
             </span>
           </div>
 

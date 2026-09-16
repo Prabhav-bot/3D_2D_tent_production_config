@@ -7,11 +7,19 @@ export class TextureSyncEngine {
   private texture: THREE.CanvasTexture;
   private imageCache: Map<string, HTMLImageElement> = new Map();
 
-  // Standard high-res texture atlas size (2048 x 2048)
+  // Standard high-res texture atlas size (2048 x 2048) for canopy
   private readonly width = 2048;
   private readonly height = 2048;
 
+  // Dedicated wall texture canvas (1024 x 1024)
+  private wallCanvas: HTMLCanvasElement;
+  private wallCtx: CanvasRenderingContext2D;
+  private wallTexture: THREE.CanvasTexture;
+  private readonly wallWidth = 1024;
+  private readonly wallHeight = 1024;
+
   constructor() {
+    // 1. Canopy Texture Atlas Canvas
     this.canvas = document.createElement('canvas');
     this.canvas.width = this.width;
     this.canvas.height = this.height;
@@ -23,18 +31,40 @@ export class TextureSyncEngine {
     this.texture = new THREE.CanvasTexture(this.canvas);
     this.texture.flipY = false;
     this.texture.colorSpace = THREE.SRGBColorSpace;
+
+    // 2. Dedicated Wall Texture Canvas
+    this.wallCanvas = document.createElement('canvas');
+    this.wallCanvas.width = this.wallWidth;
+    this.wallCanvas.height = this.wallHeight;
+
+    const wallContext = this.wallCanvas.getContext('2d');
+    if (!wallContext) throw new Error('Wall 2D Context unavailable');
+    this.wallCtx = wallContext;
+
+    this.wallTexture = new THREE.CanvasTexture(this.wallCanvas);
+    this.wallTexture.flipY = false;
+    this.wallTexture.colorSpace = THREE.SRGBColorSpace;
   }
 
   public getTexture(): THREE.CanvasTexture {
     return this.texture;
   }
 
+  public getWallTexture(): THREE.CanvasTexture {
+    return this.wallTexture;
+  }
+
   public getCanvasElement(): HTMLCanvasElement {
     return this.canvas;
   }
 
+  public getWallCanvasElement(): HTMLCanvasElement {
+    return this.wallCanvas;
+  }
+
   /**
-   * Main render function that draws all sections onto the composite 2D texture skin atlas.
+   * Main render function that draws all sections onto the composite 2D texture skin atlas,
+   * and also renders the dedicated wall panel texture.
    */
   public async renderTextureAtlas(config: ConfigurationState): Promise<void> {
     const ctx = this.ctx;
@@ -57,8 +87,10 @@ export class TextureSyncEngine {
       back_wall: { x: 0, y: 0, w: 2048, h: 772 },
     };
 
-    // Render each section onto its sub-region
+    // Render each canopy section onto its sub-region
     for (const [secId, section] of Object.entries(config.sections)) {
+      if (secId === 'back_wall') continue; // Handled separately on dedicated wall texture
+
       const bounds = secBounds[secId as SectionZoneId];
       if (!bounds) continue;
 
@@ -91,8 +123,55 @@ export class TextureSyncEngine {
       ctx.restore();
     }
 
-    // Flag texture for Three.js GPU upload update
+    // Flag canopy texture for Three.js GPU upload update
     this.texture.needsUpdate = true;
+
+    // 3. Render Dedicated Wall Texture (for Back Wall Panel & Wall Addons)
+    await this.renderWallPanelTexture(config);
+  }
+
+  private async renderWallPanelTexture(config: ConfigurationState): Promise<void> {
+    const wCtx = this.wallCtx;
+    const w = this.wallWidth;
+    const h = this.wallHeight;
+
+    wCtx.clearRect(0, 0, w, h);
+
+    const backWallSection = config.sections.back_wall;
+    const wallColor =
+      backWallSection?.backgroundColor && backWallSection.backgroundColor.trim() !== ''
+        ? backWallSection.backgroundColor
+        : config.globalCanopyColor || '#1E293B';
+
+    // Base fill
+    wCtx.fillStyle = wallColor;
+    wCtx.fillRect(0, 0, w, h);
+
+    // Subtle fabric hem and seam stitching simulation
+    wCtx.strokeStyle = 'rgba(0, 0, 0, 0.2)';
+    wCtx.lineWidth = 14;
+    wCtx.strokeRect(0, 0, w, h);
+
+    wCtx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+    wCtx.lineWidth = 4;
+    wCtx.setLineDash([12, 10]);
+    wCtx.strokeRect(16, 16, w - 32, h - 32);
+    wCtx.setLineDash([]);
+
+    // Render layers on wall panel
+    if (backWallSection && backWallSection.layers) {
+      const bounds = { x: 30, y: 30, w: w - 60, h: h - 60 };
+      for (const layer of backWallSection.layers) {
+        if (!layer.visible) continue;
+        if (layer.type === 'text') {
+          this.renderTextLayer(wCtx, layer, bounds);
+        } else if (layer.type === 'image') {
+          await this.renderImageLayer(wCtx, layer, bounds);
+        }
+      }
+    }
+
+    this.wallTexture.needsUpdate = true;
   }
 
   private renderTextLayer(
@@ -106,7 +185,7 @@ export class TextureSyncEngine {
     const posX = bounds.x + (layer.x / 100) * bounds.w;
     const posY = bounds.y + (layer.y / 100) * bounds.h;
 
-    // Scale font size proportionally for high-res 2048 atlas
+    // Scale font size proportionally for high-res canvas
     const fontPx = Math.round(layer.fontSize * (bounds.w / 500));
     const fontStyle = layer.fontStyle === 'italic' ? 'italic' : '';
     const fontWeight = layer.fontWeight === 'bold' ? 'bold' : 'normal';

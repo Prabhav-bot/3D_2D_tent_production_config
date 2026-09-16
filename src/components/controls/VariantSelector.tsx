@@ -87,22 +87,34 @@ export const VariantSelector: React.FC = () => {
 
       {/* 3. Wall Enclosure Options */}
       <div>
-        <label className="flex items-center gap-2 text-xs font-semibold text-slate-200 uppercase tracking-wider mb-2">
-          <Layers className="w-4 h-4 text-sky-400" /> 3. Wall Addon Option
-        </label>
+        <div className="flex items-center justify-between mb-2">
+          <label className="flex items-center gap-2 text-xs font-semibold text-slate-200 uppercase tracking-wider">
+            <Layers className="w-4 h-4 text-amber-400" /> 3. Wall Addon Option
+          </label>
+          {config.wallOption !== 'none' && (
+            <span className="text-[10px] font-mono text-emerald-400">Rendered in 3D</span>
+          )}
+        </div>
         <div className="grid grid-cols-3 gap-2">
           {walls.map((w) => (
             <button
               key={w.id}
-              onClick={() => setWallOption(w.id)}
+              onClick={() => {
+                setWallOption(w.id);
+                if (w.id === 'back_wall') {
+                  useConfiguratorStore.getState().setCameraPreset('back');
+                } else if (w.id === 'full_enclosure') {
+                  useConfiguratorStore.getState().setCameraPreset('iso');
+                }
+              }}
               className={`p-2 rounded-xl border text-left transition-all ${
                 config.wallOption === w.id
-                  ? 'bg-sky-500/10 border-sky-500 text-white ring-1 ring-sky-500'
+                  ? 'bg-amber-500/10 border-amber-500 text-white ring-1 ring-amber-500 shadow-md'
                   : 'bg-slate-800/60 border-slate-700/60 text-slate-300 hover:bg-slate-800'
               }`}
             >
               <span className="text-xs font-semibold block">{w.label}</span>
-              <span className="text-[11px] text-sky-400 font-medium">{w.price}</span>
+              <span className="text-[11px] text-amber-400 font-medium">{w.price}</span>
             </button>
           ))}
         </div>

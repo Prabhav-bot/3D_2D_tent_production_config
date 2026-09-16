@@ -65,6 +65,9 @@ interface ConfiguratorStore {
   setPdfModalOpen: (isOpen: boolean) => void;
   setShopifyPayloadOpen: (isOpen: boolean) => void;
   addToCart: (thumbnail?: string) => Promise<void>;
+  removeFromCart: (itemId: string) => void;
+  updateCartItemQuantity: (itemId: string, quantity: number) => void;
+  addAccessoryToCart: (item: ShopifyCartItem) => void;
   
   // 3D Controls
   setCameraPreset: (preset: 'front' | 'back' | 'left' | 'right' | 'top' | 'iso') => void;
@@ -371,6 +374,42 @@ export const useConfiguratorStore = create<ConfiguratorStore>((set, get) => {
         cartItems: [cartItem, ...state.cartItems],
         isCartOpen: true,
       }));
+    },
+
+    removeFromCart: (itemId) => {
+      set((state) => ({
+        cartItems: state.cartItems.filter((item) => item.id !== itemId),
+      }));
+    },
+
+    updateCartItemQuantity: (itemId, quantity) => {
+      if (quantity <= 0) {
+        get().removeFromCart(itemId);
+        return;
+      }
+      set((state) => ({
+        cartItems: state.cartItems.map((item) =>
+          item.id === itemId ? { ...item, quantity } : item
+        ),
+      }));
+    },
+
+    addAccessoryToCart: (item) => {
+      set((state) => {
+        const existing = state.cartItems.find((i) => i.id === item.id);
+        if (existing) {
+          return {
+            cartItems: state.cartItems.map((i) =>
+              i.id === item.id ? { ...i, quantity: i.quantity + 1 } : i
+            ),
+            isCartOpen: true,
+          };
+        }
+        return {
+          cartItems: [item, ...state.cartItems],
+          isCartOpen: true,
+        };
+      });
     },
 
     setCameraPreset: (cameraPreset) => set({ cameraPreset }),

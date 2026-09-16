@@ -12,6 +12,11 @@ import {
   CheckCircle2,
 } from 'lucide-react';
 
+const baseUrl = import.meta.env.BASE_URL.endsWith('/')
+  ? import.meta.env.BASE_URL
+  : `${import.meta.env.BASE_URL}/`;
+const heroBgImage = `${baseUrl}hero-tent-bg.jpg`;
+
 export const HeroSection: React.FC = () => {
   const setPdfModalOpen = useConfiguratorStore((state) => state.setPdfModalOpen);
   const pricing = useConfiguratorStore((state) => state.pricing);
@@ -21,7 +26,7 @@ export const HeroSection: React.FC = () => {
       {/* Background Product Image with Overlay */}
       <div className="absolute inset-0 z-0">
         <img
-          src="/hero-tent-bg.jpg"
+          src={heroBgImage}
           alt="Apex Commercial Custom Canopy Tent in Outdoor Festival"
           className="w-full h-full object-cover object-center scale-105 transition-transform duration-1000 ease-out"
         />

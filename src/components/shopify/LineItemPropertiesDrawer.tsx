@@ -20,6 +20,11 @@ import {
 import { buildShopifyProperties } from '../../services/shopifyService';
 import { ShopifyCartItem } from '../../types/configurator';
 
+const baseUrl = import.meta.env.BASE_URL.endsWith('/')
+  ? import.meta.env.BASE_URL
+  : `${import.meta.env.BASE_URL}/`;
+const defaultTentThumbnail = `${baseUrl}hero-tent-bg.jpg`;
+
 // Curated Commercial Add-On Upsells
 const ACCESSORIES_UPSELLS = [
   {
@@ -195,7 +200,7 @@ export const LineItemPropertiesDrawer: React.FC = () => {
                     {/* Item Thumbnail */}
                     <div className="w-16 h-16 rounded-xl bg-slate-900 border border-slate-800 overflow-hidden shrink-0 flex items-center justify-center p-1">
                       <img
-                        src={item.imageThumbnail || '/hero-tent-bg.jpg'}
+                        src={item.imageThumbnail || defaultTentThumbnail}
                         alt={item.title}
                         className="w-full h-full object-cover rounded-lg"
                       />
